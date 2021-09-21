@@ -1,6 +1,6 @@
 # Template for deploying k3s backed by Flux
 
-Template for deploying a single [k3s](https://k3s.io/) cluster with [k3sup](https://github.com/alexellis/k3sup) backed by [Flux](https://toolkit.fluxcd.io/) and [SOPS](https://toolkit.fluxcd.io/guides/mozilla-sops/).
+Highly opinionated template for deploying a single [k3s](https://k3s.io/) cluster with [k3sup](https://github.com/alexellis/k3sup) backed by [Flux](https://toolkit.fluxcd.io/) and [SOPS](https://toolkit.fluxcd.io/guides/mozilla-sops/).
 
 The purpose here is to showcase how you can deploy an entire Kubernetes cluster and show it off to the world using the [GitOps](https://www.weave.works/blog/what-is-gitops-really) tool [Flux](https://toolkit.fluxcd.io/). When completed, your Git repository will be driving the state of your Kubernetes cluster. In addition with the help of the [Flux SOPS integration](https://toolkit.fluxcd.io/guides/mozilla-sops/) you'll be able to commit GPG encrypted secrets to your public repo.
 
@@ -27,6 +27,7 @@ Feel free to read up on any of these technologies before you get started to be m
 - [traefik](https://traefik.io) - ingress controller
 - [hajimari](https://github.com/toboshii/hajimari) - start page with ingress discovery
 - [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller) - upgrade k3s
+- [reloader](https://github.com/stakater/Reloader) - restart pod when configmap or secret changes
 
 ## :memo:&nbsp; Prerequisites
 
@@ -117,7 +118,7 @@ Very first step will be to create a new repository by clicking the **Use this te
 
 :round_pushpin: In these instructions you will be exporting several environment variables to your current shell env. Make sure you stay with in your current shell to not lose any exported variables.
 
-:round_pushpin: **All of the below commands** are run on your **local** workstation, **not** on any of your cluster nodes. 
+:round_pushpin: **All of the below commands** are run on your **local** workstation, **not** on any of your cluster nodes.
 
 ### :closed_lock_with_key:&nbsp; Setting up GnuPG keys
 
@@ -178,7 +179,7 @@ export FLUX_KEY_FP=AB675CE4CC64251G3S9AE1DAA88ARRTY2C009E2D
 
 1. Ensure you are able to SSH into you nodes with using your private ssh key. This is how k3sup is able to connect to your remote node.
 
-2. Install the master node
+2. Install the master node(s)
 
 _We will be installing metallb instead of servicelb, traefik and metrics-server will be installed with Flux._
 
@@ -201,7 +202,7 @@ k3sup join \
 ```
 
 4. Verify the nodes are online
-   
+
 ```sh
 kubectl --kubeconfig=./kubeconfig get nodes
 # NAME           STATUS   ROLES                       AGE     VERSION
@@ -268,6 +269,7 @@ export BOOTSTRAP_GITHUB_REPOSITORY="https://github.com/k8s-at-home/home-cluster"
 # Choose one of your domains or use a made up one
 export BOOTSTRAP_DOMAIN="k8s-at-home.com"
 # Pick a range of unused IPs that are on the same network as your nodes
+# You don't need many IPs, just choose 10 to start with
 export BOOTSTRAP_METALLB_LB_RANGE="169.254.1.10-169.254.1.20"
 # The load balancer IP for traefik, choose from one of the available IPs above
 export BOOTSTRAP_SVC_TRAEFIK_ADDR="169.254.1.10"
@@ -341,6 +343,8 @@ kubectl --kubeconfig=./kubeconfig get pods -n flux-system
 
 If your cluster is not accessible to outside world you can update your hosts file to verify the ingress controller is working.
 
+This will only be temporary and you should set up DNS to handle these records either manually or automated with [external-dns](https://github.com/kubernetes-sigs/external-dns).
+
 ```sh
 echo "${BOOTSTRAP_SVC_TRAEFIK_ADDR} ${BOOTSTRAP_DOMAIN} hajimari.${BOOTSTRAP_DOMAIN}" | sudo tee -a /etc/hosts
 ```
@@ -386,30 +390,30 @@ Show the health of your main Flux `GitRepository`
 
 ```sh
 flux --kubeconfig=./kubeconfig get sources git
-# NAME           READY	MESSAGE                                                            REVISION                                         SUSPENDED
-# flux-system    True 	Fetched revision: main/943e4126e74b273ff603aedab89beb7e36be4998    main/943e4126e74b273ff603aedab89beb7e36be4998    False
+# NAME           READY    MESSAGE                                                            REVISION                                         SUSPENDED
+# flux-system    True     Fetched revision: main/943e4126e74b273ff603aedab89beb7e36be4998    main/943e4126e74b273ff603aedab89beb7e36be4998    False
 ```
 
 Show the health of your `HelmRelease`s
 
 ```sh
 flux --kubeconfig=./kubeconfig get helmrelease -A
-# NAMESPACE   	    NAME                  	READY	MESSAGE                         	REVISION	SUSPENDED
-# cert-manager	    cert-manager          	True 	Release reconciliation succeeded	v1.5.2  	False
-# default        	hajimari                True 	Release reconciliation succeeded	1.1.1   	False
-# networking  	    ingress-nginx       	True 	Release reconciliation succeeded	3.30.0  	False
+# NAMESPACE           NAME                      READY    MESSAGE                             REVISION    SUSPENDED
+# cert-manager        cert-manager              True     Release reconciliation succeeded    v1.5.2      False
+# default            hajimari                True     Release reconciliation succeeded    1.1.1       False
+# networking          ingress-nginx           True     Release reconciliation succeeded    3.30.0      False
 ```
 
 Show the health of your `HelmRepository`s
 
 ```sh
 flux --kubeconfig=./kubeconfig get sources helm -A
-# NAMESPACE  	NAME                 READY	MESSAGE                                                   	REVISION                                	SUSPENDED
-# flux-system	bitnami-charts       True 	Fetched revision: 0ec3a3335ff991c45735866feb1c0830c4ed85cf	0ec3a3335ff991c45735866feb1c0830c4ed85cf	False
-# flux-system	hajimari-charts      True 	Fetched revision: 1b24af9c5a1e3da91618d597f58f46a57c70dc13	1b24af9c5a1e3da91618d597f58f46a57c70dc13	False
-# flux-system	ingress-nginx-charts True 	Fetched revision: 45669a3117fc93acc09a00e9fb9b4445e8990722	45669a3117fc93acc09a00e9fb9b4445e8990722	False
-# flux-system	jetstack-charts      True 	Fetched revision: 7bad937cc82a012c9ee7d7a472d7bd66b48dc471	7bad937cc82a012c9ee7d7a472d7bd66b48dc471	False
-# flux-system	k8s-at-home-charts   True 	Fetched revision: 1b24af9c5a1e3da91618d597f58f46a57c70dc13	1b24af9c5a1e3da91618d597f58f46a57c70dc13	False
+# NAMESPACE      NAME                 READY    MESSAGE                                                       REVISION                                    SUSPENDED
+# flux-system    bitnami-charts       True     Fetched revision: 0ec3a3335ff991c45735866feb1c0830c4ed85cf    0ec3a3335ff991c45735866feb1c0830c4ed85cf    False
+# flux-system    hajimari-charts      True     Fetched revision: 1b24af9c5a1e3da91618d597f58f46a57c70dc13    1b24af9c5a1e3da91618d597f58f46a57c70dc13    False
+# flux-system    ingress-nginx-charts True     Fetched revision: 45669a3117fc93acc09a00e9fb9b4445e8990722    45669a3117fc93acc09a00e9fb9b4445e8990722    False
+# flux-system    jetstack-charts      True     Fetched revision: 7bad937cc82a012c9ee7d7a472d7bd66b48dc471    7bad937cc82a012c9ee7d7a472d7bd66b48dc471    False
+# flux-system    k8s-at-home-charts   True     Fetched revision: 1b24af9c5a1e3da91618d597f58f46a57c70dc13    1b24af9c5a1e3da91618d597f58f46a57c70dc13    False
 ```
 
 Flux has a wide range of CLI options available be sure to run `flux --help` to view more!
