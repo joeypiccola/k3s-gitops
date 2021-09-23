@@ -19,7 +19,7 @@ spec:
     image:
       repository: pihole/pihole
       tag: v5.8.1
-    virtualHost: pihole-k8.${SECRET_DOMAIN}"
+    virtualHost: "pihole-k8.${SECRET_DOMAIN}"
     DNS1: 10.0.3.24
     DNS2: 10.0.3.22
     ingress:
@@ -28,7 +28,7 @@ spec:
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
       enabled: true
       hosts:
-        - pihole-k8.${SECRET_DOMAIN}"
+        - "pihole-k8.${SECRET_DOMAIN}"
       tls:
         - hosts:
             - "pihole-k8.${SECRET_DOMAIN}"
