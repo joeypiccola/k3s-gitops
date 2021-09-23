@@ -22,16 +22,18 @@ spec:
     virtualHost: "pihole-k8.${SECRET_DOMAIN}"
     DNS1: 10.0.3.24
     DNS2: 10.0.3.22
-    serviceWeb:
-      annotations:
-        metallb.universe.tf/allow-shared-ip: pihole-svc
+    #serviceWeb:
+    #  annotations:
+     #   metallb.universe.tf/allow-shared-ip: pihole-svc
         #metallb.universe.tf/address-pool: default
-      type: LoadBalancer
+     # type: LoadBalancer
+
     serviceDNS:
-      annotations:
-        metallb.universe.tf/allow-shared-ip: pihole-svc
+      #annotations:
+        #metallb.universe.tf/allow-shared-ip: pihole-svc
         #metallb.universe.tf/address-pool: default
       type: LoadBalancer
+      loadBalancerIP: 10.0.3.160
     ingress:
       annotations:
         cert-manager.io/cluster-issuer: "letsencrypt-production"
