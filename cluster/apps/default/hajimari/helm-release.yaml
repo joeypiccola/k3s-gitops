@@ -101,10 +101,10 @@ spec:
         enabled: true
         ingressClassName: "traefik"
         annotations:
-          cert-manager.io/cluster-issuer: "letsencrypt-production"
+          cert-manager.io/cluster-issuer: "letsencrypt-production" # <-- fix
           hajimari.io/enable: "true"
           hajimari.io/icon: "weather-sunset"
-          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure" # <-- fix
         hosts:
           - host: "hajimari.${SECRET_DOMAIN}"
             paths:
