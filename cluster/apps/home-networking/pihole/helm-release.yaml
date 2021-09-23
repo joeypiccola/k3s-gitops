@@ -22,6 +22,14 @@ spec:
     virtualHost: "pihole-k8.${SECRET_DOMAIN}"
     DNS1: 10.0.3.24
     DNS2: 10.0.3.22
+    serviceWeb:
+      annotations:
+        metallb.universe.tf/allow-shared-ip: pihole-svc
+      type: LoadBalancer
+    serviceDNS:
+      annotations:
+        metallb.universe.tf/allow-shared-ip: pihole-svc
+      type: LoadBalancer
     ingress:
       annotations:
         cert-manager.io/cluster-issuer: "letsencrypt-production"
