@@ -25,12 +25,12 @@ spec:
     serviceWeb:
       annotations:
         metallb.universe.tf/allow-shared-ip: pihole-svc
-        metallb.universe.tf/address-pool: default
+        #metallb.universe.tf/address-pool: default
       type: LoadBalancer
     serviceDNS:
       annotations:
         metallb.universe.tf/allow-shared-ip: pihole-svc
-        metallb.universe.tf/address-pool: default
+        #metallb.universe.tf/address-pool: default
       type: LoadBalancer
     ingress:
       annotations:
