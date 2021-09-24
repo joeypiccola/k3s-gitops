@@ -22,11 +22,6 @@ spec:
     virtualHost: "pihole-k8.${SECRET_DOMAIN}"
     DNS1: 10.0.3.24
     DNS2: 10.0.3.22
-    #serviceWeb:
-    #  annotations:
-    #    metallb.universe.tf/allow-shared-ip: pihole-svc
-    #  type: LoadBalancer
-    #  loadBalancerIP: 10.0.3.160
     serviceDns:
       annotations:
         metallb.universe.tf/allow-shared-ip: pihole-svc
