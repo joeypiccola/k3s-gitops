@@ -24,9 +24,12 @@ spec:
       tag: v0.106.3
       pullPolicy: Always
     persistence:
-      #enabled: true
-      existingClaim: pihole-config
-      size: 200mi
+      config:
+        enabled: true
+        existingClaim: adguard-pvc
+      data:
+        enabled: true
+        existingClaim: adguard-pvc
     env:
       TZ: "America/Denver"
       PUID: "1000"
