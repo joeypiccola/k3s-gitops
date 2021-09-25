@@ -24,7 +24,7 @@ spec:
       tag: v0.106.3
       pullPolicy: Always
     persistence:
-      enabled: true
+      #enabled: true
       existingClaim: pihole-config
       size: 200mi
     env:
