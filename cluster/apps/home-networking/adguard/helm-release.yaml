@@ -26,10 +26,10 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: adguard-pvc
+        existingClaim: adguard-pvc-config
       data:
         enabled: true
-        existingClaim: adguard-pvc
+        existingClaim: adguard-pvc-data
     env:
       TZ: "America/Denver"
       PUID: "1000"
