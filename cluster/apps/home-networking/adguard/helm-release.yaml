@@ -66,7 +66,7 @@ spec:
     ingress:
       main:
         enabled: true
-        # ingressClassName: "nginx-internal"
+        ingressClassName: "traefik"
         annotations:
           cert-manager.io/cluster-issuer: "letsencrypt-production"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
