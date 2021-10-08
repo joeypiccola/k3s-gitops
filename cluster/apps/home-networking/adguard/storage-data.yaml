@@ -11,7 +11,7 @@ spec:
     - ReadWriteMany
   nfs:
     server: ${NAS}
-    path: /mnt/file_shares/k8_apps/adguard/data
+    path: /mnt/file_shares/k8_apps/adguard # adguard creates a "data" folder here!
 
 ---
 apiVersion: v1
