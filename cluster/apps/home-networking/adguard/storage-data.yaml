@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: adguard
+  name: adguard-pv-data
+spec:
+  storageClassName: adguard-nfs-data
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: ${NAS}
+    path: /mnt/file_shares/k8_apps/adguard/data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: adguard
+  name: adguard-pvc-data
+spec:
+  storageClassName: adguard-nfs-data
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi
