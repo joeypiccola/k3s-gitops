@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: plex-pv-config
+spec:
+  storageClassName: plex-nfs-config
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: ${NAS}
+    path: /mnt/file_shares/k8_apps/plex/config
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: media
+  name: plex-pvc-config
+spec:
+  storageClassName: plex-nfs-config
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi
