@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - media.yaml
   - _storage
-  #- plex
+  - plex
