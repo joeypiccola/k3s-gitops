@@ -37,7 +37,7 @@ spec:
         # annotations:
         #  traefik.ingress.kubernetes.io/service.serversscheme: https
         #  metallb.universe.tf/allow-shared-ip: plex
-        loadBalancerIP: 10.0.3.161
+        loadBalancerIP: 10.0.3.162
         externalTrafficPolicy: Local
 
     ingress:
