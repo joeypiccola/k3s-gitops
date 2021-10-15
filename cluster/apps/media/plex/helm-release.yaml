@@ -65,12 +65,12 @@ spec:
         enabled: true
         existingClaim: plex-pvc-config
 
-      # nfs-nas-media:
-      #   enabled: true
-      #   type: custom
-      #   volumeSpec:
-      #     nfs:
-      #       server: "${NAS}"
-      #       path: /mnt/file_shares/media
-      #   mountPath: /media
-      #   readOnly: true
+      nfs-nas-media:
+        enabled: true
+        type: custom
+        volumeSpec:
+          nfs:
+            server: "${NAS_IP}"
+            path: /mnt/file_shares/media
+        mountPath: /media
+        readOnly: true
