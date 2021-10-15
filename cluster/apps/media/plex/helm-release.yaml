@@ -5,6 +5,7 @@ metadata:
   name: plex
   namespace: media
 spec:
+  releaseName: plex
   interval: 5m
   chart:
     spec:
