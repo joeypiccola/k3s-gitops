@@ -22,8 +22,8 @@ spec:
       repository: ghcr.io/k8s-at-home/plex
       tag: v1.24.4.5081-e362dc1ee
     podSecurityContext:
-      runAsUser: 23115
-      runAsGroup: 20513
+      # runAsUser: 23115
+      # runAsGroup: 20513
       supplementalGroups:
         - 44
         - 109
