@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: pihole/pihole
-      tag: v5.8.1
+      tag: 2021.12.1
     virtualHost: "pihole-k8.${SECRET_DOMAIN}"
     DNS1: 10.0.3.24
     DNS2: 10.0.3.22
